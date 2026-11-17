@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Dragon Ball Z: The Next Generation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Chakra+Petch:ital,wght@0,500;0,700;1,700&family=Orbitron:wght@600;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --dbz-orange: #ff6b00;
+            --dbz-gold: #ffd700;
+            --dbz-red: #e60012;
+            --radar-green: #00ff66;
+        }
+
+        body {
+            font-family: 'Chakra Petch', sans-serif;
+            background-color: #070913;
+            color: #ffffff;
+            overflow-x: hidden;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .font-anime {
+            font-family: 'Bangers', cursive;
+            letter-spacing: 0.06em;
+        }
+
+        .font-scouter {
+            font-family: 'Orbitron', monospace;
+        }
+
+        /* DBZ Title Text Styling */
+        .dbz-title-gradient {
+            background: linear-gradient(180deg, #fff7ad 0%, #ffd700 35%, #ff6b00 75%, #cc2900 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0px 4px 0px #000) drop-shadow(0px 0px 18px rgba(255, 165, 0, 0.7));
+        }
+
+        .dbz-red-gradient {
+            background: linear-gradient(180deg, #ff7b7b 0%, #ff1e1e 45%, #990000 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0px 3px 0px #000) drop-shadow(0px 0px 12px rgba(255, 0, 0, 0.8));
+        }
+
+        /* Golden Ki Aura Pulse */
+        @keyframes auraPulse {
+            0%, 100% {
+                box-shadow: 0 0 20px #ffd700, 0 0 45px #ff6b00, inset 0 0 20px rgba(255, 215, 0, 0.4);
+                transform: scale(1);
+            }
+            50% {
+                box-shadow: 0 0 35px #fffb00, 0 0 75px #ff5100, inset 0 0 30px rgba(255, 215, 0, 0.7);
+                transform: scale(1.02);
+            }
+        }
+
+        .ki-aura {
+            animation: auraPulse 2s infinite ease-in-out;
+        }
+
+        /* Dragon Radar Grid & Sweep */
+        .radar-grid {
+            background-color: #042b16;
+            background-image: 
+                linear-gradient(rgba(0, 255, 102, 0.22) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 102, 0.22) 1px, transparent 1px);
+            background-size: 28px 28px;
+            background-position: center center;
+            box-shadow: inset 0 0 40px #011409, 0 0 25px rgba(0, 255, 102, 0.35);
+        }
+
+        @keyframes radarSweep {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .radar-sweep {
+            background: conic-gradient(from 0deg, rgba(0, 255, 102, 0.45) 0deg, rgba(0, 255, 102, 0.05) 60deg, transparent 90deg);
+            animation: radarSweep 3.2s linear infinite;
+        }
+
+        /* Radar Blip Pulse */
+        @keyframes blipPing {
+            0% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(255, 180, 0, 0.9); }
+            70% { transform: scale(1.12); box-shadow: 0 0 0 16px rgba(255, 180, 0, 0); }
+            100% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(255, 180, 0, 0); }
+        }
+
+        .dragon-blip {
+            animation: blipPing 1.4s infinite;
+            cursor: pointer;
+            transition: transform 0.15s ease;
+        }
+
+        .dragon-blip:hover {
+            transform: scale(1.25) !important;
+        }
+
+        /* Screen Shake for Powering Up */
+        @keyframes screenShake {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            20% { transform: translate(-5px, 4px) rotate(-0.8deg); }
+            40% { transform: translate(5px, -4px) rotate(0.8deg); }
+            60% { transform: translate(-6px, -3px) rotate(-0.5deg); }
+            80% { transform: translate(6px, 3px) rotate(0.5deg); }
+        }
+
+        .shake-active {
+            animation: screenShake 0.18s infinite;
+        }
+
+        /* Scouter Scanlines */
+        .scouter-hud {
+            background: 
+                repeating-linear-gradient(
+                    0deg,
+                    rgba(0, 255, 102, 0.06) 0px,
+                    rgba(0, 255, 102, 0.06) 2px,
+                    transparent 2px,
+                    transparent 4px
+                ),
+                radial-gradient(circle at center, rgba(0, 60, 25, 0.55) 0%, rgba(4, 15, 10, 0.92) 100%);
+        }
+
+        .scouter-hud-overload {
+            background: 
+                repeating-linear-gradient(
+                    0deg,
+                    rgba(255, 40, 40, 0.1) 0px,
+                    rgba(255, 40, 40, 0.1) 2px,
+                    transparent 2px,
+                    transparent 4px
+                ),
+                radial-gradient(circle at center, rgba(110, 10, 10, 0.65) 0%, rgba(20, 4, 4, 0.95) 100%);
+        }
+
+        /* Floating Shenron Animation */
+        @keyframes floatShenron {
+            0%, 100% { transform: translateY(0px) scale(1); }
+            50% { transform: translateY(-10px) scale(1.02); }
+        }
+
+        .shenron-float {
+            animation: floatShenron 3.5s ease-in-out infinite;
+        }
+
+        /* Lightning Flash Overlay */
+        @keyframes flashBurst {
+            0% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        .flash-overlay {
+            pointer-events: none;
+            animation: flashBurst 0.9s ease-out forwards;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #070913;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #ff6b00;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between relative selection:bg-orange-500 selection:text-white">
+
+    <!-- Background Particle Canvas (Ki Energy & Golden Sparks) -->
+    <canvas id="kiCanvas" class="fixed inset-0 pointer-events-none z-0"></canvas>
+
+    <!-- White/Gold Screen Flash Overlay -->
+    <div id="flashOverlay" class="fixed inset-0 bg-gradient-to-b from-white via-yellow-200 to-orange-400 z-50 hidden"></div>
+
+    <!-- Top Navigation / Status Header -->
+    <header class="relative z-20 w-full max-w-4xl mx-auto px-4 pt-3 pb-2 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+            <!-- Mini 4-Star Dragon Ball Emblem -->
+            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-yellow-300 via-orange-500 to-red-600 flex items-center justify-center shadow-lg border border-yellow-200">
+                <span class="text-red-700 font-bold text-xs">★</span>
+            </div>
+            <span class="font-anime text-xl sm:text-2xl tracking-wider text-orange-400 drop-shadow">CAPSULE CORP. LINK</span>
+        </div>
+
+        <div class="flex items-center gap-2 sm:gap-3">
+            <!-- Customize Personalization Button -->
+            <button id="openCustomizeBtn" class="px-3 py-1.5 rounded-full bg-slate-800/90 hover:bg-slate-700 border border-orange-400/50 text-xs sm:text-sm font-semibold text-orange-300 flex items-center gap-1.5 transition shadow">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                </svg>
+                <span>Customize</span>
+            </button>
+
+            <!-- Retro Synth Audio Toggle -->
+            <button id="soundToggleBtn" class="px-3 py-1.5 rounded-full bg-slate-800/90 hover:bg-slate-700 border border-emerald-400/60 text-xs sm:text-sm font-semibold text-emerald-300 flex items-center gap-1.5 transition shadow">
+                <span id="soundIcon">🔊</span>
+                <span id="soundLabel" class="hidden sm:inline">SFX: ON</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Game Container -->
+    <main id="gameRoot" class="relative z-10 flex-1 flex flex-col items-center justify-center w-full max-w-4xl mx-auto px-4 py-2">
+
+        <!-- ==========================================
+             STAGE 0: TITLE SCREEN
+             ========================================== -->
+        <section id="screenTitle" class="w-full flex flex-col items-center text-center py-6 space-y-6">
+            <!-- Z Emblem Badge -->
+            <div class="relative flex items-center justify-center">
+                <div class="absolute -inset-6 rounded-full bg-gradient-to-r from-yellow-400 via-orange-500 to-red-600 blur-xl opacity-60 animate-pulse"></div>
+                <div class="relative w-28 h-28 sm:w-32 sm:h-32 rounded-full bg-gradient-to-br from-yellow-300 via-orange-500 to-red-600 p-1.5 shadow-2xl border-2 border-yellow-200 flex items-center justify-center">
+                    <!-- 4-Star Dragon Ball SVG -->
+                    <svg viewBox="0 0 100 100" class="w-full h-full drop-shadow">
+                        <defs>
+                            <radialGradient id="ballGradMain" cx="32%" cy="30%" r="68%">
+                                <stop offset="0%" stop-color="#fff3a1"/>
+                                <stop offset="35%" stop-color="#ff9900"/>
+                                <stop offset="80%" stop-color="#e64800"/>
+                                <stop offset="100%" stop-color="#991f00"/>
+                            </radialGradient>
+                        </defs>
+                        <circle cx="50" cy="50" r="46" fill="url(#ballGradMain)"/>
+                        <!-- Glossy Highlight -->
+                        <ellipse cx="34" cy="26" rx="16" ry="9" transform="rotate(-25 34 26)" fill="rgba(255,255,255,0.55)"/>
+                        <!-- 4 Red Stars -->
+                        <g fill="#d90429">
+                            <polygon points="35,30 37,35 42,35 38,38 39,43 35,40 31,43 32,38 28,35 33,35"/>
+                            <polygon points="65,30 67,35 72,35 68,38 69,43 65,40 61,43 62,38 58,35 63,35"/>
+                            <polygon points="35,60 37,65 42,65 38,68 39,73 35,70 31,73 32,68 28,65 33,65"/>
+                            <polygon points="65,60 67,65 72,65 68,68 69,73 65,70 61,73 62,68 58,65 63,65"/>
+                        </g>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Anime Title Typography -->
+            <div class="space-y-1">
+                <p class="text-xs sm:text-sm uppercase tracking-[0.35em] text-yellow-300 font-bold">URGENT TRANSMISSION FROM CAPSULE CORP</p>
+                <h1 class="font-anime text-5xl sm:text-7xl md:text-8xl leading-none dbz-title-gradient">
+                    DRAGON BALL Z
+                </h1>
+                <h2 class="font-anime text-3xl sm:text-5xl tracking-widest dbz-red-gradient">
+                    THE NEXT GENERATION
+                </h2>
+            </div>
+
+            <!-- Mission Briefing Card -->
+            <div class="max-w-lg w-full bg-slate-900/85 border-2 border-orange-500/60 rounded-2xl p-5 shadow-2xl backdrop-blur-md">
+                <div class="flex items-center justify-center gap-2 text-emerald-400 font-scouter text-xs sm:text-sm mb-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+                    <span>RADAR ALERT: MYSTERIOUS ENERGY DETECTED</span>
+                </div>
+                <p class="text-slate-200 text-sm sm:text-base leading-relaxed">
+                    Bulma's Dragon Radar has picked up <span class="text-yellow-400 font-bold">7 Dragon Balls</span> converging around your location, along with a brand-new, ultra-powerful energy signature! Gather all 7 spheres to summon Shenron and decode the message!
+                </p>
+            </div>
+
+            <!-- Start Mission CTA -->
+            <button id="startMissionBtn" class="ki-aura group relative px-10 py-4 rounded-2xl bg-gradient-to-r from-yellow-400 via-orange-500 to-red-600 text-slate-950 font-anime text-3xl sm:text-4xl tracking-wider shadow-2xl border-2 border-yellow-200 active:scale-95 transition transform cursor-pointer">
+                <span class="drop-shadow-[0_2px_0_rgba(255,255,255,0.6)]">⚡ START MISSION ⚡</span>
+            </button>
+        </section>
+
+        <!-- ==========================================
+             STAGE 1: DRAGON RADAR HUNT
+             ========================================== -->
+        <section id="screenRadar" class="w-full hidden flex-col items-center justify-center space-y-4 py-2">
+            <!-- Stage Header -->
+            <div class="text-center space-y-1">
+                <span class="inline-block px-3 py-0.5 rounded-full bg-emerald-950 border border-emerald-400/50 text-emerald-300 font-scouter text-xs">
+                    STAGE 1 OF 2 • DRAGON RADAR ACTIVE
+                </span>
+                <h2 class="font-anime text-3xl sm:text-4xl text-yellow-400 tracking-wide drop-shadow">
+                    TAP THE 7 PULSING SIGNALS ON THE RADAR!
+                </h2>
+            </div>
+
+            <!-- Collected Dragon Balls Tray (1 to 7 Stars) -->
+            <div id="collectedTray" class="w-full max-w-md bg-slate-900/90 border border-slate-700 rounded-2xl p-2.5 flex items-center justify-around shadow-inner">
+                <!-- Populated dynamically by JS -->
+            </div>
+
+            <!-- Bulma's Dragon Radar Casing -->
+            <div class="relative flex flex-col items-center">
+                <!-- Top Radar Clicker Button Graphic -->
+                <div class="w-12 h-5 bg-gradient-to-b from-slate-200 to-slate-400 rounded-t-lg border-2 border-slate-500 shadow"></div>
+                <div class="w-6 h-3 bg-slate-400 border-x-2 border-slate-500"></div>
+
+                <!-- Outer Metallic Radar Ring -->
+                <div class="relative w-72 h-72 sm:w-88 sm:h-88 md:w-96 md:h-96 rounded-full p-3.5 bg-gradient-to-br from-slate-100 via-slate-300 to-slate-500 shadow-[0_0_45px_rgba(0,255,102,0.35)] border-4 border-slate-200 flex items-center justify-center">
+                    
+                    <!-- Inner Green Grid Screen -->
+                    <div id="radarScreen" class="relative w-full h-full rounded-full radar-grid overflow-hidden border-4 border-slate-800 flex items-center justify-center">
+                        <!-- Concentric Radar Circles -->
+                        <div class="absolute w-3/4 h-3/4 rounded-full border border-emerald-400/30 pointer-events-none"></div>
+                        <div class="absolute w-2/4 h-2/4 rounded-full border border-emerald-400/30 pointer-events-none"></div>
+                        <div class="absolute w-1/4 h-1/4 rounded-full border border-emerald-400/30 pointer-events-none"></div>
+                        
+                        <!-- Crosshair Lines -->
+                        <div class="absolute inset-x-0 h-px bg-emerald-400/35 pointer-events-none"></div>
+                        <div class="absolute inset-y-0 w-px bg-emerald-400/35 pointer-events-none"></div>
+
+                        <!-- Rotating Radar Sweep Beam -->
+                        <div class="absolute inset-0 rounded-full radar-sweep pointer-events-none"></div>
+
+                        <!-- Center Triangle Marker (Player Position) -->
+                        <div class="relative z-10 w-0 h-0 border-l-[7px] border-l-transparent border-r-[7px] border-r-transparent border-b-[12px] border-b-red-500 drop-shadow-[0_0_6px_#ff0000] pointer-events-none"></div>
+
+                        <!-- Dynamic Dragon Ball Blips Container -->
+                        <div id="radarBlipsContainer" class="absolute inset-0 z-20"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Clue / Transmission Console Box -->
+            <div class="w-full max-w-lg bg-slate-900/95 border-2 border-emerald-500/70 rounded-2xl p-4 shadow-xl">
+                <div class="flex items-center justify-between text-xs font-scouter text-emerald-400 mb-1">
+                    <span>CAPSULE CORP DECODER</span>
+                    <span id="radarCounterText">0 / 7 COLLECTED</span>
+                </div>
+                <p id="radarClueText" class="text-amber-300 font-semibold text-sm sm:text-base min-h-[2.75rem] flex items-center">
+                    Tap any glowing yellow Dragon Ball signal on the radar screen to begin scanning!
+                </p>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             STAGE 2: SCOUTER SCAN & KI POWER UP
+             ========================================== -->
+        <section id="screenScouter" class="w-full hidden flex-col items-center justify-center space-y-5 py-2">
+            <!-- Stage Header -->
+            <div class="text-center space-y-1">
+                <span class="inline-block px-3 py-0.5 rounded-full bg-red-950 border border-red-400/50 text-red-300 font-scouter text-xs animate-pulse">
+                    STAGE 2 OF 2 • ALL 7 DRAGON BALLS GATHERED!
+                </span>
+                <h2 class="font-anime text-3xl sm:text-5xl text-yellow-400 tracking-wide drop-shadow">
+                    CHARGE YOUR KI TO SUMMON SHENRON!
+                </h2>
+            </div>
+
+            <!-- Scouter HUD Visor Card -->
+            <div id="scouterVisor" class="relative w-full max-w-lg rounded-3xl border-4 border-emerald-400/80 scouter-hud p-6 shadow-[0_0_50px_rgba(0,255,102,0.3)] overflow-hidden transition-colors duration-300">
+                
+                <!-- Scouter Target Reticle SVG -->
+                <svg class="absolute right-4 top-4 w-24 h-24 text-emerald-400/25 pointer-events-none spin-slow" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="42" stroke="currentColor" stroke-width="2" stroke-dasharray="10 6" fill="none"/>
+                    <circle cx="50" cy="50" r="26" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                    <line x1="50" y1="0" x2="50" y2="20" stroke="currentColor" stroke-width="2"/>
+                    <line x1="50" y1="80" x2="50" y2="100" stroke="currentColor" stroke-width="2"/>
+                    <line x1="0" y1="50" x2="20" y2="50" stroke="currentColor" stroke-width="2"/>
+                    <line x1="80" y1="50" x2="100" y2="50" stroke="currentColor" stroke-width="2"/>
+                </svg>
+
+                <div class="relative z-10 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span id="scouterStatusBadge" class="font-scouter text-xs sm:text-sm text-emerald-300 tracking-widest uppercase">
+                            ▶ SCANNING NEW LIFEFORM...
+                        </span>
+                        <span class="font-scouter text-xs text-amber-300">DIST: 0.0 KM</span>
+                    </div>
+
+                    <!-- Power Level Digital Readout -->
+                    <div class="text-center py-3 bg-black/40 rounded-2xl border border-emerald-500/40">
+                        <p class="font-scouter text-xs text-slate-300 uppercase tracking-widest mb-1">DETECTED POWER LEVEL</p>
+                        <div id="powerLevelNumber" class="font-scouter text-4xl sm:text-6xl font-black text-emerald-400 tracking-wider drop-shadow-[0_0_12px_rgba(0,255,102,0.8)]">
+                            1,000
+                        </div>
+                    </div>
+
+                    <!-- Ki Charge Progress Bar -->
+                    <div class="space-y-1.5">
+                        <div class="flex justify-between text-xs font-scouter">
+                            <span class="text-yellow-300">SHENRON SUMMONING GAUGE</span>
+                            <span id="chargePercentText" class="text-yellow-300 font-bold">0%</span>
+                        </div>
+                        <div class="w-full h-5 bg-slate-950 rounded-full overflow-hidden border-2 border-yellow-400/60 p-0.5">
+                            <div id="chargeProgressBar" class="h-full w-0 rounded-full bg-gradient-to-r from-emerald-400 via-yellow-400 to-red-500 transition-all duration-100"></div>
+                        </div>
+                    </div>
+
+                    <p id="scouterMessage" class="text-center text-sm sm:text-base text-emerald-200 font-medium">
+                        Rapidly tap or hold the button below to amplify your Ki!
+                    </p>
+                </div>
+            </div>
+
+            <!-- Glowing 7 Dragon Balls Altar -->
+            <div id="altarBalls" class="flex items-center justify-center gap-2 py-1">
+                <!-- Small glowing spheres pulsing in unison -->
+                <div class="w-7 h-7 rounded-full bg-gradient-to-br from-yellow-200 via-orange-500 to-red-600 animate-bounce shadow-[0_0_15px_#ffd700]" style="animation-delay: 0ms;"></div>
+                <div class="w-7 h-7 rounded-full bg-gradient-to-br from-yellow-200 via-orange-500 to-red-600 animate-bounce shadow-[0_0_15px_#ffd700]" style="animation-delay: 100ms;"></div>
+                <div class="w-7 h-7 rounded-full bg-gradient-to-br from-yellow-200 via-orange-500 to-red-600 animate-bounce shadow-[0_0_15px_#ffd700]" style="animation-delay: 200ms;"></div>
+                <div class="w-7 h-7 rounded-full bg-gradient-to-br from-yellow-200 via-orange-500 to-red-600 animate-bounce shadow-[0_0_15px_#ffd700]" style="animation-delay: 300ms;"></div>
+                <div class="w-7 h-7 rounded-full bg-gradient-to-br from-yellow-200 via-orange-500 to-red-600 animate-bounce shadow-[0_0_15px_#ffd700]" style="animation-delay: 400ms;"></div>
+                <div class="w-7 h-7 rounded-full bg-gradient-to-br from-yellow-200 via-orange-500 to-red-600 animate-bounce shadow-[0_0_15px_#ffd700]" style="animation-delay: 500ms;"></div>
+                <div class="w-7 h-7 rounded-full bg-gradient-to-br from-yellow-200 via-orange-500 to-red-600 animate-bounce shadow-[0_0_15px_#ffd700]" style="animation-delay: 600ms;"></div>
+            </div>
+
+            <!-- Charge Ki Interactive Button -->
+            <button id="chargeKiBtn" class="ki-aura select-none w-full max-w-md py-5 px-8 rounded-2xl bg-gradient-to-r from-yellow-400 via-orange-500 to-red-600 text-slate-950 font-anime text-3xl sm:text-4xl tracking-wider border-2 border-white shadow-2xl active:scale-95 transition transform cursor-pointer">
+                🔥 TAP TO CHARGE KI! 🔥
+            </button>
+        </section>
+
+        <!-- ==========================================
+             STAGE 3: THE GRAND GRANDPA REVEAL!
+             ========================================== -->
+        <section id="screenReveal" class="w-full hidden flex-col items-center justify-center space-y-5 py-3">
+            
+            <!-- Shenron Stylized SVG Art with Glowing Red Eyes -->
+            <div class="relative flex flex-col items-center">
+                <div class="absolute -inset-6 bg-gradient-to-b from-emerald-500/30 via-yellow-400/25 to-transparent rounded-full blur-2xl pointer-events-none"></div>
+                
+                <div class="shenron-float relative w-52 h-36 sm:w-64 sm:h-44 flex items-center justify-center">
+                    <svg viewBox="0 0 300 210" class="w-full h-full drop-shadow-[0_0_20px_rgba(16,185,129,0.7)]">
+                        <!-- Golden Halo Aura -->
+                        <circle cx="150" cy="110" r="85" fill="none" stroke="#ffd700" stroke-width="3" stroke-dasharray="8 6" opacity="0.6"/>
+                        
+                        <!-- Coiled Dragon Body Silhouette -->
+                        <path d="M40,180 C20,130 65,95 105,115 C140,130 175,130 205,110 C240,85 270,130 255,180" fill="none" stroke="#059669" stroke-width="22" stroke-linecap="round"/>
+                        <path d="M40,180 C20,130 65,95 105,115 C140,130 175,130 205,110 C240,85 270,130 255,180" fill="none" stroke="#34d399" stroke-width="14" stroke-linecap="round"/>
+                        <path d="M40,180 C20,130 65,95 105,115 C140,130 175,130 205,110 C240,85 270,130 255,180" fill="none" stroke="#fde047" stroke-width="5" stroke-dasharray="6 8" stroke-linecap="round"/>
+
+                        <!-- Dragon Antlers / Horns -->
+                        <path d="M120,55 L95,20 L110,25 L102,10 M180,55 L205,20 L190,25 L198,10" stroke="#d97706" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+
+                        <!-- Dragon Head -->
+                        <polygon points="150,35 112,68 122,115 150,132 178,115 188,68" fill="#10b981" stroke="#064e3b" stroke-width="4"/>
+                        <polygon points="150,42 122,70 130,108 150,122 170,108 178,70" fill="#059669"/>
+
+                        <!-- Flowing Whiskers -->
+                        <path d="M122,102 Q70,95 45,125" fill="none" stroke="#34d399" stroke-width="4" stroke-linecap="round"/>
+                        <path d="M178,102 Q230,95 255,125" fill="none" stroke="#34d399" stroke-width="4" stroke-linecap="round"/>
+
+                        <!-- Glowing Red Shenron Eyes -->
+                        <polygon points="128,78 144,85 130,90" fill="#ff002b"/>
+                        <polygon points="172,78 156,85 170,90" fill="#ff002b"/>
+                        <!-- Eye Glow -->
+                        <circle cx="135" cy="84" r="4" fill="#ffffff" opacity="0.8"/>
+                        <circle cx="165" cy="84" r="4" fill="#ffffff" opacity="0.8"/>
+                    </svg>
+                </div>
+
+                <!-- 7 Glowing Dragon Balls Row Under Shenron -->
+                <div class="flex items-center justify-center gap-2 -mt-2">
+                    <span class="w-5 h-5 rounded-full bg-gradient-to-br from-yellow-200 via-orange-500 to-red-600 shadow-[0_0_12px_#ffd700] border border-yellow-100"></span>
+                    <span class="w-5 h-5 rounded-full bg-gradient-to-br from-yellow-200 via-orange-500 to-red-600 shadow-[0_0_12px_#ffd700] border border-yellow-100"></span>
+                    <span class="w-5 h-5 rounded-full bg-gradient-to-br from-yellow-200 via-orange-500 to-red-600 shadow-[0_0_12px_#ffd700] border border-yellow-100"></span>
+                    <span class="w-6 h-6 rounded-full bg-gradient-to-br from-yellow-200 via-orange-500 to-red-600 shadow-[0_0_16px_#ffd700] border border-yellow-100"></span>
+                    <span class="w-5 h-5 rounded-full bg-gradient-to-br from-yellow-200 via-orange-500 to-red-600 shadow-[0_0_12px_#ffd700] border border-yellow-100"></span>
+                    <span class="w-5 h-5 rounded-full bg-gradient-to-br from-yellow-200 via-orange-500 to-red-600 shadow-[0_0_12px_#ffd700] border border-yellow-100"></span>
+                    <span class="w-5 h-5 rounded-full bg-gradient-to-br from-yellow-200 via-orange-500 to-red-600 shadow-[0_0_12px_#ffd700] border border-yellow-100"></span>
+                </div>
+            </div>
+
+            <!-- Dramatic Anime Title Card Reveal -->
+            <div class="text-center space-y-2 max-w-2xl px-2">
+                <div class="inline-block px-4 py-1 rounded-full bg-yellow-400/20 border border-yellow-300 text-yellow-300 font-scouter text-xs sm:text-sm tracking-widest uppercase">
+                    ★ SHENRON HAS GRANTED THE ULTIMATE WISH ★
+                </div>
+                <h2 class="font-anime text-3xl sm:text-5xl text-white tracking-wider drop-shadow-[0_3px_0_#000]">
+                    A NEW SAIYAN WARRIOR IS JOINING <span id="revealClanName" class="text-yellow-400">THE CLAN</span>!
+                </h2>
+                <div class="py-2 px-6 rounded-3xl bg-gradient-to-r from-orange-600/40 via-yellow-500/40 to-orange-600/40 border-2 border-yellow-300 shadow-[0_0_40px_rgba(255,215,0,0.4)]">
+                    <h1 class="font-anime text-4xl sm:text-6xl md:text-7xl dbz-title-gradient leading-tight">
+                        CONGRATULATIONS!<br>
+                        YOU'RE GOING TO BE A <span id="revealTitleRole">GRANDPA</span>!
+                    </h1>
+                </div>
+            </div>
+
+            <!-- Scouter Analysis Card (Baby & Grandpa Stats) -->
+            <div class="w-full max-w-xl bg-slate-900/90 border-2 border-emerald-400/80 rounded-3xl p-5 shadow-2xl backdrop-blur-md">
+                <div class="flex items-center justify-between border-b border-emerald-500/30 pb-2.5 mb-4">
+                    <div class="flex items-center gap-2">
+                        <span class="w-3 h-3 rounded-full bg-emerald-400 animate-ping"></span>
+                        <span class="font-scouter text-xs sm:text-sm text-emerald-300 font-bold tracking-wider">SCOUTER BIO-SCAN REPORT</span>
+                    </div>
+                    <span class="font-scouter text-xs text-yellow-400">ID: BABY-SAIYAN-01</span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-left">
+                    <!-- Stat 1 -->
+                    <div class="bg-slate-950/80 border border-slate-800 rounded-2xl p-3.5">
+                        <p class="text-xs font-scouter text-slate-400 uppercase">FIGHTER CLASS</p>
+                        <p class="text-lg font-bold text-yellow-300 flex items-center gap-1.5 mt-0.5">
+                            <span>👶</span> <span>Mini Super Saiyan</span>
+                        </p>
+                    </div>
+
+                    <!-- Stat 2 -->
+                    <div class="bg-slate-950/80 border border-slate-800 rounded-2xl p-3.5">
+                        <p class="text-xs font-scouter text-slate-400 uppercase">POWER LEVEL (CUTENESS)</p>
+                        <p class="text-lg font-bold text-red-400 font-scouter mt-0.5">
+                            💥 OVER 9,000!!!
+                        </p>
+                    </div>
+
+                    <!-- Stat 3 -->
+                    <div class="bg-slate-950/80 border border-slate-800 rounded-2xl p-3.5">
+                        <p class="text-xs font-scouter text-slate-400 uppercase">NEW RANK UNLOCKED</p>
+                        <p class="text-lg font-bold text-orange-400 mt-0.5">
+                            🐢 Grandpa Gohan / Master Roshi
+                        </p>
+                    </div>
+
+                    <!-- Stat 4 (Customizable Arrival Date) -->
+                    <div class="bg-slate-950/80 border border-emerald-500/40 rounded-2xl p-3.5">
+                        <p class="text-xs font-scouter text-emerald-400 uppercase">SAIYAN POD LANDING DATE</p>
+                        <p id="revealDueDate" class="text-lg font-bold text-white mt-0.5">
+                            Coming Soon!
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Special Training Note -->
+                <div class="mt-4 bg-gradient-to-r from-amber-500/15 via-orange-500/15 to-red-500/15 border border-amber-400/40 rounded-xl p-3 text-center">
+                    <p id="revealCustomNote" class="text-xs sm:text-sm text-amber-200 italic">
+                        "Get your Kamehameha training ready, Grandpa! Your newest training partner is on the way!"
+                    </p>
+                </div>
+            </div>
+
+            <!-- Action Buttons Row -->
+            <div class="flex flex-wrap items-center justify-center gap-3 pt-1">
+                <button id="replayMissionBtn" class="px-6 py-3 rounded-xl bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-300 hover:to-orange-400 text-slate-950 font-anime text-2xl tracking-wider shadow-lg transition active:scale-95 cursor-pointer">
+                    🔄 REPLAY MISSION
+                </button>
+                <button id="customizeFromRevealBtn" class="px-5 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-orange-400/60 text-orange-300 font-semibold text-sm sm:text-base transition active:scale-95 cursor-pointer">
+                    ✏️ Edit Due Date / Family Name
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ==========================================
+         CUSTOMIZATION MODAL (Personalize Before Sharing)
+         ========================================== -->
+    <div id="customizeModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="w-full max-w-md bg-slate-900 border-2 border-orange-500 rounded-3xl p-6 shadow-2xl space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <h3 class="font-anime text-2xl text-yellow-400 tracking-wide">CUSTOMIZE REVEAL DETAILS</h3>
+                <button id="closeCustomizeBtn" class="text-slate-400 hover:text-white text-xl font-bold px-2">✕</button>
+            </div>
+
+            <div class="space-y-3 text-sm">
+                <div>
+                    <label class="block text-xs font-scouter text-orange-300 uppercase mb-1">Grandpa Title / Nickname</label>
+                    <input id="inputRole" type="text" value="GRANDPA" placeholder="e.g., GRANDPA, PAPA, ABUELO, POP-POP" class="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white focus:outline-none focus:border-orange-400">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-scouter text-orange-300 uppercase mb-1">Family / Clan Name</label>
+                    <input id="inputClan" type="text" value="THE CLAN" placeholder="e.g., THE SMITH CLAN" class="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white focus:outline-none focus:border-orange-400">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-scouter text-orange-300 uppercase mb-1">Estimated Arrival (Due Date)</label>
+                    <input id="inputDueDate" type="text" value="Coming Soon!" placeholder="e.g., May 2027 / This Fall!" class="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white focus:outline-none focus:border-orange-400">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-scouter text-orange-300 uppercase mb-1">Personal Message Note</label>
+                    <textarea id="inputNote" rows="2" class="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white focus:outline-none focus:border-orange-400">"Get your Kamehameha training ready, Grandpa! Your newest training partner is on the way!"</textarea>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-end gap-2 pt-2">
+                <button id="cancelCustomizeBtn" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-semibold">
+                    Cancel
+                </button>
+                <button id="saveCustomizeBtn" class="px-5 py-2 rounded-xl bg-gradient-to-r from-yellow-400 to-orange-500 text-slate-950 font-bold text-sm shadow">
+                    Save & Apply
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="relative z-10 text-center py-2 text-xs text-slate-500">
+        <span>CAPSULE CORPORATION RADAR SYSTEM • POWER LEVEL OVER 9,000</span>
+    </footer>
+
+    <!-- ==========================================
+         GAME LOGIC, WEB AUDIO SYNTH & ANIMATIONS
+         ========================================== -->
+    <script>
+        /**************************************************************
+         * 1. RETRO ANIME SYNTHESIZER (Web Audio API - No External Files)
+         **************************************************************/
+        class DBZSoundEngine {
+            constructor() {
+                this.ctx = null;
+                this.enabled = true;
+            }
+
+            init() {
+                if (!this.ctx) {
+                    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                    this.ctx = new AudioCtx();
+                }
+                if (this.ctx && this.ctx.state === 'suspended') {
+                    this.ctx.resume();
+                }
+            }
+
+            toggle() {
+                this.enabled = !this.enabled;
+                return this.enabled;
+            }
+
+            // Bulma's Dragon Radar double-ping sound
+            playRadarPing(ballIndex = 1) {
+                if (!this.enabled) return;
+                this.init();
+                const now = this.ctx.currentTime;
+                const baseFreq = 980 + ballIndex * 75;
+
+                [0, 0.11].forEach((offset, idx) => {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(baseFreq + (idx * 240), now + offset);
+
+                    gain.gain.setValueAtTime(0.22, now + offset);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + offset + 0.18);
+
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start(now + offset);
+                    osc.stop(now + offset + 0.19);
+                });
+            }
+
+            // Classic Scouter digital chirp + Ki surge
+            playScouterBeep(powerRatio = 0.2) {
+                if (!this.enabled) return;
+                this.init();
+                const now = this.ctx.currentTime;
+
+                // High tech scouter chirp
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'square';
+                const freq = 1100 + powerRatio * 1200;
+                osc.frequency.setValueAtTime(freq, now);
+                osc.frequency.setValueAtTime(freq * 1.18, now + 0.04);
+
+                gain.gain.setValueAtTime(0.09, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
+
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.095);
+
+                // Low Ki aura hum
+                const hum = this.ctx.createOscillator();
+                const humGain = this.ctx.createGain();
+                hum.type = 'sawtooth';
+                hum.frequency.setValueAtTime(95 + powerRatio * 140, now);
+
+                humGain.gain.setValueAtTime(0.08, now);
+                humGain.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
+
+                hum.connect(humGain);
+                humGain.connect(this.ctx.destination);
+                hum.start(now);
+                hum.stop(now + 0.17);
+            }
+
+            // Dramatic Shenron Summoning & Grand Reveal Fanfare
+            playSummonFanfare() {
+                if (!this.enabled) return;
+                this.init();
+                const now = this.ctx.currentTime;
+
+                // Heroic ascending anime brass-like synth chord progression
+                const notes = [261.63, 329.63, 392.00, 523.25, 659.25, 783.99];
+                notes.forEach((freq, i) => {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'triangle';
+                    const startTime = now + i * 0.11;
+                    const duration = i === notes.length - 1 ? 1.2 : 0.35;
+
+                    osc.frequency.setValueAtTime(freq, startTime);
+                    gain.gain.setValueAtTime(0.2, startTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start(startTime);
+                    osc.stop(startTime + duration + 0.02);
+                });
+            }
+        }
+
+        const sfx = new DBZSoundEngine();
+
+        /**************************************************************
+         * 2. SVG GENERATOR FOR DRAGON BALLS (1 TO 7 STARS)
+         **************************************************************/
+        const STAR_LAYOUTS = {
+            1: [[50, 50]],
+            2: [[38, 50], [62, 50]],
+            3: [[50, 34], [36, 62], [64, 62]],
+            4: [[36, 36], [64, 36], [36, 64], [64, 64]],
+            5: [[50, 50], [33, 33], [67, 33], [33, 67], [67, 67]],
+            6: [[36, 30], [64, 30], [32, 52], [68, 52], [38, 72], [62, 72]],
+            7: [[50, 50], [50, 26], [71, 38], [71, 62], [50, 74], [29, 62], [29, 38]]
+        };
+
+        function createStarPolygon(cx, cy, r = 6.5) {
+            const pts = [];
+            for (let i = 0; i < 10; i++) {
+                const radius = i % 2 === 0 ? r : r * 0.42;
+                const angle = (Math.PI / 5) * i - Math.PI / 2;
+                const x = cx + radius * Math.cos(angle);
+                const y = cy + radius * Math.sin(angle);
+                pts.push(`${x.toFixed(1)},${y.toFixed(1)}`);
+            }
+            return `<polygon points="${pts.join(' ')}" fill="#d90429" />`;
+        }
+
+        function createDragonBallSVG(stars = 1, isCollected = true) {
+            const coords = STAR_LAYOUTS[stars] || STAR_LAYOUTS[1];
+            const starsMarkup = coords.map(([x, y]) => createStarPolygon(x, y, 6.5)).join('');
+            const filterClass = isCollected ? '' : 'opacity-25 grayscale';
+
+            return `
+                <svg viewBox="0 0 100 100" class="w-full h-full ${filterClass} transition-all duration-300">
+                    <circle cx="50" cy="50" r="46" fill="url(#ballGradMain)" stroke="#ffd700" stroke-width="2"/>
+                    <ellipse cx="34" cy="26" rx="14" ry="8" transform="rotate(-25 34 26)" fill="rgba(255,255,255,0.55)"/>
+                    ${starsMarkup}
+                </svg>
+            `;
+        }
+
+        /**************************************************************
+         * 3. GAME STATE & CLUES
+         **************************************************************/
+        const RADAR_CLUES = [
+            "1-Star Ball Found! Detecting a mysterious new energy signature nearby...",
+            "2-Star Ball Found! Scouter sensors indicate this energy is tiny—but growing fast!",
+            "3-Star Ball Found! Capsule Corp confirms: A miniature Saiyan Pod is en route to Earth!",
+            "4-Star Ball Found! Grandpa Gohan's prized sphere resonates with pure joy!",
+            "5-Star Ball Found! Master Roshi says: 'Time to dust off your Kamehameha training!'",
+            "6-Star Ball Found! Energy reading is skyrocketing... A new generation is awakening!",
+            "7-Star Ball Found! ALL 7 DRAGON BALLS GATHERED! Initiating Scouter Link..."
+        ];
+
+        // Pre-calculated radar coordinates (% inside radar circle) so they never overlap
+        const RADAR_POSITIONS = [
+            { stars: 1, x: 26, y: 28 },
+            { stars: 2, x: 72, y: 25 },
+            { stars: 3, x: 20, y: 58 },
+            { stars: 4, x: 58, y: 45 },
+            { stars: 5, x: 77, y: 62 },
+            { stars: 6, x: 38, y: 76 },
+            { stars: 7, x: 62, y: 78 }
+        ];
+
+        let collectedCount = 0;
+        let collectedSet = new Set();
+        let chargePower = 0; // 0 to 100
+        let chargeCompleted = false;
+
+        // DOM Elements
+        const screenTitle = document.getElementById('screenTitle');
+        const screenRadar = document.getElementById('screenRadar');
+        const screenScouter = document.getElementById('screenScouter');
+        const screenReveal = document.getElementById('screenReveal');
+        const flashOverlay = document.getElementById('flashOverlay');
+        const gameRoot = document.getElementById('gameRoot');
+
+        const collectedTray = document.getElementById('collectedTray');
+        const radarBlipsContainer = document.getElementById('radarBlipsContainer');
+        const radarCounterText = document.getElementById('radarCounterText');
+        const radarClueText = document.getElementById('radarClueText');
+
+        const scouterVisor = document.getElementById('scouterVisor');
+        const scouterStatusBadge = document.getElementById('scouterStatusBadge');
+        const powerLevelNumber = document.getElementById('powerLevelNumber');
+        const chargePercentText = document.getElementById('chargePercentText');
+        const chargeProgressBar = document.getElementById('chargeProgressBar');
+        const scouterMessage = document.getElementById('scouterMessage');
+        const chargeKiBtn = document.getElementById('chargeKiBtn');
+
+        /**************************************************************
+         * 4. STAGE TRANSITIONS & GAMEPLAY HANDLERS
+         **************************************************************/
+        function showScreen(targetScreen) {
+            [screenTitle, screenRadar, screenScouter, screenReveal].forEach(sec => {
+                sec.classList.add('hidden');
+                sec.classList.remove('flex');
+            });
+            targetScreen.classList.remove('hidden');
+            targetScreen.classList.add('flex');
+        }
+
+        function triggerFlash() {
+            flashOverlay.classList.remove('hidden', 'flash-overlay');
+            void flashOverlay.offsetWidth; // Force reflow
+            flashOverlay.classList.add('flash-overlay');
+            setTimeout(() => {
+                flashOverlay.classList.add('hidden');
+            }, 900);
+        }
+
+        // Initialize Stage 1: Dragon Radar Hunt
+        function startRadarStage() {
+            collectedCount = 0;
+            collectedSet.clear();
+            renderCollectedTray();
+            renderRadarBlips();
+            radarCounterText.textContent = `0 / 7 COLLECTED`;
+            radarClueText.textContent = `Tap each pulsing Dragon Ball signal on Bulma's radar to decode the secret transmission!`;
+            showScreen(screenRadar);
+        }
+
+        function renderCollectedTray() {
+            collectedTray.innerHTML = '';
+            for (let s = 1; s <= 7; s++) {
+                const slot = document.createElement('div');
+                slot.className = 'w-9 h-9 sm:w-11 sm:h-11 rounded-full p-0.5 flex items-center justify-center';
+                slot.innerHTML = createDragonBallSVG(s, collectedSet.has(s));
+                collectedTray.appendChild(slot);
+            }
+        }
+
+        function renderRadarBlips() {
+            radarBlipsContainer.innerHTML = '';
+            RADAR_POSITIONS.forEach((pos) => {
+                const btn = document.createElement('button');
+                btn.className = 'dragon-blip absolute -translate-x-1/2 -translate-y-1/2 w-10 h-10 sm:w-11 sm:h-11 rounded-full p-0.5 focus:outline-none';
+                btn.style.left = `${pos.x}%`;
+                btn.style.top = `${pos.y}%`;
+                btn.setAttribute('aria-label', `${pos.stars}-Star Dragon Ball`);
+                btn.innerHTML = createDragonBallSVG(pos.stars, true);
+
+                btn.addEventListener('click', () => collectDragonBall(pos.stars, btn));
+                radarBlipsContainer.appendChild(btn);
+            });
+        }
+
+        function collectDragonBall(stars, btnElement) {
+            if (collectedSet.has(stars)) return;
+            collectedSet.add(stars);
+            collectedCount++;
+
+            // Play radar sound
+            sfx.playRadarPing(collectedCount);
+
+            // Visual pop-out animation on radar
+            btnElement.style.pointerEvents = 'none';
+            btnElement.style.transform = 'translate(-50%, -50%) scale(1.6)';
+            btnElement.style.opacity = '0';
+            setTimeout(() => btnElement.remove(), 220);
+
+            // Update tray & clue text
+            renderCollectedTray();
+            radarCounterText.textContent = `${collectedCount} / 7 COLLECTED`;
+            radarClueText.textContent = RADAR_CLUES[collectedCount - 1];
+
+            // Burst particles
+            spawnBurstParticles(14);
+
+            // If all 7 collected, transition to Stage 2
+            if (collectedCount === 7) {
+                setTimeout(() => {
+                    triggerFlash();
+                    initScouterStage();
+                }, 1300);
+            }
+        }
+
+        // Initialize Stage 2: Scouter Scan & Ki Power-Up
+        function initScouterStage() {
+            chargePower = 0;
+            chargeCompleted = false;
+            updateScouterUI();
+            showScreen(screenScouter);
+            sfx.playScouterBeep(0.1);
+        }
+
+        function handleChargeBoost() {
+            if (chargeCompleted) return;
+
+            chargePower = Math.min(100, chargePower + 12.5);
+            sfx.playScouterBeep(chargePower / 100);
+            spawnBurstParticles(10);
+
+            // Shake screen briefly
+            gameRoot.classList.add('shake-active');
+            setTimeout(() => {
+                if (!chargeCompleted) gameRoot.classList.remove('shake-active');
+            }, 180);
+
+            updateScouterUI();
+
+            if (chargePower >= 100) {
+                chargeCompleted = true;
+                scouterStatusBadge.textContent = '⚠️ WARNING: SCOUTER OVERLOAD! ⚠️';
+                scouterStatusBadge.classList.replace('text-emerald-300', 'text-red-400');
+                powerLevelNumber.textContent = 'OVER 9,000!!!';
+                powerLevelNumber.classList.replace('text-emerald-400', 'text-red-500');
+                scouterVisor.classList.remove('scouter-hud', 'border-emerald-400/80');
+                scouterVisor.classList.add('scouter-hud-overload', 'border-red-500');
+                scouterMessage.textContent = 'SHENRON IS EMERGING FROM THE GOLDEN SKY!';
+                chargeKiBtn.textContent = '⚡ SUMMONING SHENRON... ⚡';
+
+                setTimeout(() => {
+                    gameRoot.classList.remove('shake-active');
+                    triggerFlash();
+                    sfx.playSummonFanfare();
+                    spawnBurstParticles(60);
+                    showScreen(screenReveal);
+                }, 1100);
+            }
+        }
+
+        function updateScouterUI() {
+            const numericPower = Math.floor(1000 + (chargePower / 100) * 8001);
+            if (chargePower < 100) {
+                powerLevelNumber.textContent = numericPower.toLocaleString();
+                powerLevelNumber.classList.remove('text-red-500');
+                powerLevelNumber.classList.add('text-emerald-400');
+                scouterVisor.classList.add('scouter-hud', 'border-emerald-400/80');
+                scouterVisor.classList.remove('scouter-hud-overload', 'border-red-500');
+                scouterStatusBadge.textContent = '▶ SCANNING INCOMING SAIYAN POD...';
+                scouterStatusBadge.classList.replace('text-red-400', 'text-emerald-300');
+                chargeKiBtn.textContent = '🔥 TAP TO CHARGE KI! 🔥';
+            }
+            chargePercentText.textContent = `${Math.floor(chargePower)}%`;
+            chargeProgressBar.style.width = `${chargePower}%`;
+        }
+
+        /**************************************************************
+         * 5. BACKGROUND GOLDEN KI PARTICLE CANVAS
+         **************************************************************/
+        const canvas = document.getElementById('kiCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        function createParticle(isBurst = false) {
+            return {
+                x: isBurst ? canvas.width / 2 + (Math.random() - 0.5) * 180 : Math.random() * canvas.width,
+                y: isBurst ? canvas.height / 2 + (Math.random() - 0.5) * 180 : canvas.height + Math.random() * 60,
+                size: Math.random() * 4 + 1.5,
+                speedY: -(Math.random() * 2.2 + 0.8),
+                speedX: (Math.random() - 0.5) * 1.4,
+                alpha: Math.random() * 0.75 + 0.25,
+                color: Math.random() > 0.35 ? '#ffd700' : '#ff6b00'
+            };
+        }
+
+        for (let i = 0; i < 45; i++) {
+            const p = createParticle(false);
+            p.y = Math.random() * canvas.height;
+            particles.push(p);
+        }
+
+        function spawnBurstParticles(count = 20) {
+            for (let i = 0; i < count; i++) {
+                particles.push(createParticle(true));
+            }
+            if (particles.length > 140) {
+                particles.splice(0, particles.length - 140);
+            }
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particles.length; i++) {
+                const p = particles[i];
+                p.y += p.speedY;
+                p.x += p.speedX;
+
+                ctx.save();
+                ctx.globalAlpha = p.alpha;
+                ctx.fillStyle = p.color;
+                ctx.shadowColor = p.color;
+                ctx.shadowBlur = 10;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+
+                if (p.y < -15) {
+                    particles[i] = createParticle(false);
+                }
+            }
+            requestAnimationFrame(animateParticles);
+        }
+
+        /**************************************************************
+         * 6. EVENT LISTENERS & CUSTOMIZATION MODAL
+         **************************************************************/
+        document.getElementById('startMissionBtn').addEventListener('click', () => {
+            sfx.playRadarPing(1);
+            startRadarStage();
+        });
+
+        chargeKiBtn.addEventListener('click', handleChargeBoost);
+
+        // Allow Spacebar or Enter during Scouter stage for desktop fun
+        window.addEventListener('keydown', (e) => {
+            if ((e.code === 'Space' || e.code === 'Enter') && !screenScouter.classList.contains('hidden')) {
+                e.preventDefault();
+                handleChargeBoost();
+            }
+        });
+
+        document.getElementById('replayMissionBtn').addEventListener('click', () => {
+            sfx.playRadarPing(2);
+            startRadarStage();
+        });
+
+        // Sound Toggle Button
+        const soundToggleBtn = document.getElementById('soundToggleBtn');
+        const soundIcon = document.getElementById('soundIcon');
+        const soundLabel = document.getElementById('soundLabel');
+
+        soundToggleBtn.addEventListener('click', () => {
+            const isOn = sfx.toggle();
+            soundIcon.textContent = isOn ? '🔊' : '🔇';
+            soundLabel.textContent = isOn ? 'SFX: ON' : 'SFX: OFF';
+            if (isOn) sfx.playRadarPing(3);
+        });
+
+        // Customization Modal Logic
+        const customizeModal = document.getElementById('customizeModal');
+        const openCustomizeBtn = document.getElementById('openCustomizeBtn');
+        const customizeFromRevealBtn = document.getElementById('customizeFromRevealBtn');
+        const closeCustomizeBtn = document.getElementById('closeCustomizeBtn');
+        const cancelCustomizeBtn = document.getElementById('cancelCustomizeBtn');
+        const saveCustomizeBtn = document.getElementById('saveCustomizeBtn');
+
+        function openModal() {
+            customizeModal.classList.remove('hidden');
+            customizeModal.classList.add('flex');
+        }
+
+        function closeModal() {
+            customizeModal.classList.add('hidden');
+            customizeModal.classList.remove('flex');
+        }
+
+        openCustomizeBtn.addEventListener('click', openModal);
+        customizeFromRevealBtn.addEventListener('click', openModal);
+        closeCustomizeBtn.addEventListener('click', closeModal);
+        cancelCustomizeBtn.addEventListener('click', closeModal);
+
+        saveCustomizeBtn.addEventListener('click', () => {
+            const roleVal = document.getElementById('inputRole').value.trim() || 'GRANDPA';
+            const clanVal = document.getElementById('inputClan').value.trim() || 'THE CLAN';
+            const dueVal = document.getElementById('inputDueDate').value.trim() || 'Coming Soon!';
+            const noteVal = document.getElementById('inputNote').value.trim();
+
+            document.getElementById('revealTitleRole').textContent = roleVal.toUpperCase();
+            document.getElementById('revealClanName').textContent = clanVal.toUpperCase();
+            document.getElementById('revealDueDate').textContent = dueVal;
+            if (noteVal) {
+                document.getElementById('revealCustomNote').textContent = noteVal;
+            }
+            sfx.playRadarPing(5);
+            closeModal();
+        });
+
+        // Start background animation on window load
+        window.onload = function () {
+            animateParticles();
+        };
+    </script>
+</body>
+</html>
