@@ -475,7 +475,7 @@
                     ★ SHENRON HAS GRANTED THE ULTIMATE WISH ★
                 </div>
                 <h2 class="font-anime text-3xl sm:text-5xl text-white tracking-wider drop-shadow-[0_3px_0_#000]">
-                    A NEW SAIYAN WARRIOR IS JOINING <span id="revealClanName" class="text-yellow-400">THE CLAN</span>!
+                    <span class="text-orange-400">KIARA IS HAVING A BABY!</span> A NEW SAIYAN WARRIOR IS JOINING <span id="revealClanName" class="text-yellow-400">THE CLAN</span>!
                 </h2>
                 <div class="py-2 px-6 rounded-3xl bg-gradient-to-r from-orange-600/40 via-yellow-500/40 to-orange-600/40 border-2 border-yellow-300 shadow-[0_0_40px_rgba(255,215,0,0.4)]">
                     <h1 class="font-anime text-4xl sm:text-6xl md:text-7xl dbz-title-gradient leading-tight">
@@ -578,7 +578,7 @@
 
                 <div>
                     <label class="block text-xs font-scouter text-orange-300 uppercase mb-1">Personal Message Note</label>
-                    <textarea id="inputNote" rows="2" class="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white focus:outline-none focus:border-orange-400">"Get your Kamehameha training ready, Grandpa! Your newest training partner is on the way!"</textarea>
+                    <textarea id="inputNote" rows="2" class="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white focus:outline-none focus:border-orange-400">"Kiara is having a baby! Get your Kamehameha training ready, Grandpa—your newest training partner is on the way!"</textarea>
                 </div>
             </div>
 
@@ -1179,12 +1179,45 @@
         });
 
         // Customization Modal Logic
+        const STORAGE_KEY = 'dbz_grandpa_config_v2';
+        const DEFAULT_CONFIG = {
+            role: 'GRANDPA',
+            clan: 'THE CLAN',
+            due: 'Coming Soon!',
+            note: '"Kiara is having a baby! Get your Kamehameha training ready, Grandpa—your newest training partner is on the way!"'
+        };
+
         const customizeModal = document.getElementById('customizeModal');
         const openCustomizeBtn = document.getElementById('openCustomizeBtn');
         const customizeFromRevealBtn = document.getElementById('customizeFromRevealBtn');
         const closeCustomizeBtn = document.getElementById('closeCustomizeBtn');
         const cancelCustomizeBtn = document.getElementById('cancelCustomizeBtn');
         const saveCustomizeBtn = document.getElementById('saveCustomizeBtn');
+
+        function applyConfig(cfg) {
+            document.getElementById('revealTitleRole').textContent = (cfg.role || DEFAULT_CONFIG.role).toUpperCase();
+            document.getElementById('revealClanName').textContent = (cfg.clan || DEFAULT_CONFIG.clan).toUpperCase();
+            document.getElementById('revealDueDate').textContent = cfg.due || DEFAULT_CONFIG.due;
+            document.getElementById('revealCustomNote').textContent = cfg.note || DEFAULT_CONFIG.note;
+
+            document.getElementById('inputRole').value = cfg.role || DEFAULT_CONFIG.role;
+            document.getElementById('inputClan').value = cfg.clan || DEFAULT_CONFIG.clan;
+            document.getElementById('inputDueDate').value = cfg.due || DEFAULT_CONFIG.due;
+            document.getElementById('inputNote').value = cfg.note || DEFAULT_CONFIG.note;
+        }
+
+        function loadSavedConfig() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                if (raw) {
+                    applyConfig({ ...DEFAULT_CONFIG, ...JSON.parse(raw) });
+                    return;
+                }
+            } catch (e) {
+                // Ignore storage errors in restricted modes
+            }
+            applyConfig(DEFAULT_CONFIG);
+        }
 
         function openModal() {
             customizeModal.classList.remove('hidden');
@@ -1202,16 +1235,18 @@
         cancelCustomizeBtn.addEventListener('click', closeModal);
 
         saveCustomizeBtn.addEventListener('click', () => {
-            const roleVal = document.getElementById('inputRole').value.trim() || 'GRANDPA';
-            const clanVal = document.getElementById('inputClan').value.trim() || 'THE CLAN';
-            const dueVal = document.getElementById('inputDueDate').value.trim() || 'Coming Soon!';
-            const noteVal = document.getElementById('inputNote').value.trim();
+            const newConfig = {
+                role: document.getElementById('inputRole').value.trim() || DEFAULT_CONFIG.role,
+                clan: document.getElementById('inputClan').value.trim() || DEFAULT_CONFIG.clan,
+                due: document.getElementById('inputDueDate').value.trim() || DEFAULT_CONFIG.due,
+                note: document.getElementById('inputNote').value.trim() || DEFAULT_CONFIG.note
+            };
 
-            document.getElementById('revealTitleRole').textContent = roleVal.toUpperCase();
-            document.getElementById('revealClanName').textContent = clanVal.toUpperCase();
-            document.getElementById('revealDueDate').textContent = dueVal;
-            if (noteVal) {
-                document.getElementById('revealCustomNote').textContent = noteVal;
+            applyConfig(newConfig);
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(newConfig));
+            } catch (e) {
+                // Ignore storage errors
             }
             sfx.playRadarPing(5);
             closeModal();
@@ -1219,6 +1254,7 @@
 
         // Start background animation on window load
         window.onload = function () {
+            loadSavedConfig();
             animateParticles();
         };
     </script>
