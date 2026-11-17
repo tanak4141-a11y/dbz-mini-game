@@ -269,6 +269,12 @@
             <button id="startMissionBtn" class="ki-aura group relative px-10 py-4 rounded-2xl bg-gradient-to-r from-yellow-400 via-orange-500 to-red-600 text-slate-950 font-anime text-3xl sm:text-4xl tracking-wider shadow-2xl border-2 border-yellow-200 active:scale-95 transition transform cursor-pointer">
                 <span class="drop-shadow-[0_2px_0_rgba(255,255,255,0.6)]">⚡ START MISSION ⚡</span>
             </button>
+
+            <!-- Subtle Mobile Audio Indicator -->
+            <p id="mobileAudioHint" class="text-xs text-slate-400 font-scouter tracking-wide flex items-center justify-center gap-1.5 opacity-90">
+                <span>📱</span>
+                <span>MOBILE USERS: TAP ANYWHERE &amp; TURN UP MEDIA VOLUME FOR FULL DBZ SFX</span>
+            </p>
         </section>
 
         <!-- ==========================================
@@ -592,38 +598,127 @@
         <span>CAPSULE CORPORATION RADAR SYSTEM • POWER LEVEL OVER 9,000</span>
     </footer>
 
+    <!-- Hidden HTML5 Audio Element (1-sample silent WAV) to force iOS Safari into 'playback' channel & bypass Silent Switch -->
+    <audio id="iosSilentAudioUnlock" preload="auto" playsinline style="display:none;" src="data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA"></audio>
+
     <!-- ==========================================
          GAME LOGIC, WEB AUDIO SYNTH & ANIMATIONS
          ========================================== -->
     <script>
         /**************************************************************
-         * 1. RETRO ANIME SYNTHESIZER (Web Audio API - No External Files)
+         * 1. RETRO ANIME SYNTHESIZER (Web Audio API + iOS/Android Unlock)
          **************************************************************/
         class DBZSoundEngine {
             constructor() {
                 this.ctx = null;
                 this.enabled = true;
+                this.unlocked = false;
+                this.silentAudioEl = document.getElementById('iosSilentAudioUnlock');
+                this.setupGlobalMobileUnlock();
             }
 
+            // Synchronously initialize and resume AudioContext inside direct user gesture
             init() {
-                if (!this.ctx) {
-                    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                try {
+                    // iOS 17+ Safari: Force Web Audio to ignore the physical Ring/Silent switch
+                    if (navigator.audioSession && navigator.audioSession.type !== 'playback') {
+                        navigator.audioSession.type = 'playback';
+                    }
+                } catch (e) {
+                    // Ignore if unsupported on current browser
+                }
+
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                if (!this.ctx && AudioCtx) {
                     this.ctx = new AudioCtx();
                 }
-                if (this.ctx && this.ctx.state === 'suspended') {
+
+                if (this.ctx && (this.ctx.state === 'suspended' || this.ctx.state === 'interrupted')) {
                     this.ctx.resume();
                 }
             }
 
+            // Unlock Web Audio & HTML5 media channel on the very first touch/click anywhere
+            unlockMobileAudio() {
+                this.init();
+                if (!this.ctx) return;
+
+                if (this.ctx.state === 'suspended' || this.ctx.state === 'interrupted') {
+                    this.ctx.resume();
+                }
+
+                if (!this.unlocked) {
+                    try {
+                        // 1. Play 1-frame silent Web Audio buffer synchronously inside gesture handler
+                        const buffer = this.ctx.createBuffer(1, 1, 22050);
+                        const source = this.ctx.createBufferSource();
+                        source.buffer = buffer;
+                        source.connect(this.ctx.destination);
+                        if (source.start) {
+                            source.start(0);
+                        } else if (source.noteOn) {
+                            source.noteOn(0);
+                        }
+
+                        // 2. Play hidden HTML5 <audio> silent WAV to switch older iOS Safari from 'ambient' to 'playback'
+                        if (this.silentAudioEl) {
+                            this.silentAudioEl.volume = 0.01;
+                            const playPromise = this.silentAudioEl.play();
+                            if (playPromise !== undefined) {
+                                playPromise.then(() => {
+                                    this.unlocked = true;
+                                }).catch(() => {
+                                    // Will retry on next gesture if blocked
+                                });
+                            }
+                        } else {
+                            this.unlocked = true;
+                        }
+                    } catch (err) {
+                        // Ignore unlock errors
+                    }
+                }
+            }
+
+            setupGlobalMobileUnlock() {
+                const unlockEvents = ['touchstart', 'touchend', 'pointerdown', 'click', 'keydown'];
+                const handleGesture = () => {
+                    this.unlockMobileAudio();
+                    if (this.ctx && this.ctx.state === 'running' && this.unlocked) {
+                        const hint = document.getElementById('mobileAudioHint');
+                        if (hint) {
+                            hint.innerHTML = '<span>🔊</span><span class="text-emerald-400">CAPSULE CORP AUDIO LINK: ACTIVE</span>';
+                        }
+                    }
+                };
+                unlockEvents.forEach((evt) => {
+                    window.addEventListener(evt, handleGesture, { passive: true, capture: true });
+                });
+            }
+
+            ensureReady() {
+                if (!this.enabled) return false;
+                this.init();
+                if (!this.ctx) return false;
+                if (this.ctx.state === 'suspended' || this.ctx.state === 'interrupted') {
+                    this.ctx.resume();
+                }
+                return true;
+            }
+
             toggle() {
                 this.enabled = !this.enabled;
+                if (this.enabled) {
+                    this.unlockMobileAudio();
+                }
                 return this.enabled;
             }
 
             // Bulma's Dragon Radar double-ping sound
             playRadarPing(ballIndex = 1) {
-                if (!this.enabled) return;
-                this.init();
+                if (!this.ensureReady()) return;
+                if (this.ctx.state === 'suspended') this.ctx.resume();
+
                 const now = this.ctx.currentTime;
                 const baseFreq = 980 + ballIndex * 75;
 
@@ -633,7 +728,7 @@
                     osc.type = 'sine';
                     osc.frequency.setValueAtTime(baseFreq + (idx * 240), now + offset);
 
-                    gain.gain.setValueAtTime(0.22, now + offset);
+                    gain.gain.setValueAtTime(0.24, now + offset);
                     gain.gain.exponentialRampToValueAtTime(0.001, now + offset + 0.18);
 
                     osc.connect(gain);
@@ -643,13 +738,12 @@
                 });
             }
 
-            // Classic Scouter digital chirp + Ki surge
+            // Classic Scouter digital chirp
             playScouterBeep(powerRatio = 0.2) {
-                if (!this.enabled) return;
-                this.init();
-                const now = this.ctx.currentTime;
+                if (!this.ensureReady()) return;
+                if (this.ctx.state === 'suspended') this.ctx.resume();
 
-                // High tech scouter chirp
+                const now = this.ctx.currentTime;
                 const osc = this.ctx.createOscillator();
                 const gain = this.ctx.createGain();
                 osc.type = 'square';
@@ -657,46 +751,75 @@
                 osc.frequency.setValueAtTime(freq, now);
                 osc.frequency.setValueAtTime(freq * 1.18, now + 0.04);
 
-                gain.gain.setValueAtTime(0.09, now);
+                gain.gain.setValueAtTime(0.11, now);
                 gain.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
 
                 osc.connect(gain);
                 gain.connect(this.ctx.destination);
                 osc.start(now);
                 osc.stop(now + 0.095);
+            }
 
-                // Low Ki aura hum
+            // Rising Super Saiyan Ki aura charge hum
+            playKiCharge(powerRatio = 0.2) {
+                if (!this.ensureReady()) return;
+                if (this.ctx.state === 'suspended') this.ctx.resume();
+
+                const now = this.ctx.currentTime;
                 const hum = this.ctx.createOscillator();
                 const humGain = this.ctx.createGain();
                 hum.type = 'sawtooth';
-                hum.frequency.setValueAtTime(95 + powerRatio * 140, now);
+                const startFreq = 95 + powerRatio * 150;
+                hum.frequency.setValueAtTime(startFreq, now);
+                hum.frequency.linearRampToValueAtTime(startFreq * 1.25, now + 0.16);
 
-                humGain.gain.setValueAtTime(0.08, now);
-                humGain.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
+                humGain.gain.setValueAtTime(0.12, now);
+                humGain.gain.exponentialRampToValueAtTime(0.001, now + 0.17);
 
                 hum.connect(humGain);
                 humGain.connect(this.ctx.destination);
                 hum.start(now);
-                hum.stop(now + 0.17);
+                hum.stop(now + 0.18);
+            }
+
+            // Scouter Overload "OVER 9,000!" alarm burst
+            playOver9000() {
+                if (!this.ensureReady()) return;
+                if (this.ctx.state === 'suspended') this.ctx.resume();
+
+                const now = this.ctx.currentTime;
+                [0, 0.08, 0.16, 0.24].forEach((offset, idx) => {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(1600 + (idx % 2) * 600, now + offset);
+
+                    gain.gain.setValueAtTime(0.18, now + offset);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + offset + 0.07);
+
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start(now + offset);
+                    osc.stop(now + offset + 0.075);
+                });
             }
 
             // Dramatic Shenron Summoning & Grand Reveal Fanfare
-            playSummonFanfare() {
-                if (!this.enabled) return;
-                this.init();
-                const now = this.ctx.currentTime;
+            playShenronSummon() {
+                if (!this.ensureReady()) return;
+                if (this.ctx.state === 'suspended') this.ctx.resume();
 
-                // Heroic ascending anime brass-like synth chord progression
+                const now = this.ctx.currentTime;
                 const notes = [261.63, 329.63, 392.00, 523.25, 659.25, 783.99];
                 notes.forEach((freq, i) => {
                     const osc = this.ctx.createOscillator();
                     const gain = this.ctx.createGain();
                     osc.type = 'triangle';
                     const startTime = now + i * 0.11;
-                    const duration = i === notes.length - 1 ? 1.2 : 0.35;
+                    const duration = i === notes.length - 1 ? 1.25 : 0.35;
 
                     osc.frequency.setValueAtTime(freq, startTime);
-                    gain.gain.setValueAtTime(0.2, startTime);
+                    gain.gain.setValueAtTime(0.24, startTime);
                     gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
 
                     osc.connect(gain);
@@ -704,6 +827,11 @@
                     osc.start(startTime);
                     osc.stop(startTime + duration + 0.02);
                 });
+            }
+
+            // Alias for backwards compatibility
+            playSummonFanfare() {
+                this.playShenronSummon();
             }
         }
 
@@ -899,7 +1027,9 @@
             if (chargeCompleted) return;
 
             chargePower = Math.min(100, chargePower + 12.5);
-            sfx.playScouterBeep(chargePower / 100);
+            const ratio = chargePower / 100;
+            sfx.playScouterBeep(ratio);
+            sfx.playKiCharge(ratio);
             spawnBurstParticles(10);
 
             // Shake screen briefly
@@ -912,6 +1042,7 @@
 
             if (chargePower >= 100) {
                 chargeCompleted = true;
+                sfx.playOver9000();
                 scouterStatusBadge.textContent = '⚠️ WARNING: SCOUTER OVERLOAD! ⚠️';
                 scouterStatusBadge.classList.replace('text-emerald-300', 'text-red-400');
                 powerLevelNumber.textContent = 'OVER 9,000!!!';
@@ -924,7 +1055,7 @@
                 setTimeout(() => {
                     gameRoot.classList.remove('shake-active');
                     triggerFlash();
-                    sfx.playSummonFanfare();
+                    sfx.playShenronSummon();
                     spawnBurstParticles(60);
                     showScreen(screenReveal);
                 }, 1100);
