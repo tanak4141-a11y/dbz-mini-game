@@ -260,14 +260,14 @@
                     <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
                     <span>RADAR ALERT: MYSTERIOUS ENERGY DETECTED</span>
                 </div>
-                <p class="text-slate-200 text-sm sm:text-base leading-relaxed">
+                    <p class="text-slate-200 text-sm sm:text-base leading-relaxed">
                     Bulma's Dragon Radar has picked up <span class="text-yellow-400 font-bold">7 Dragon Balls</span> converging around your location, along with a brand-new, ultra-powerful energy signature! Gather all 7 spheres to summon Shenron and decode the message!
                 </p>
             </div>
 
             <!-- Start Mission CTA -->
             <button id="startMissionBtn" class="ki-aura group relative px-10 py-4 rounded-2xl bg-gradient-to-r from-yellow-400 via-orange-500 to-red-600 text-slate-950 font-anime text-3xl sm:text-4xl tracking-wider shadow-2xl border-2 border-yellow-200 active:scale-95 transition transform cursor-pointer">
-                <span class="drop-shadow-[0_2px_0_rgba(255,255,255,0.6)]">⚡ START MISSION ⚡</span>
+                <span class="drop-shadow-[0_2px_0_rgba(255,255,255,0.6)]">⚡ POWER UP &amp; START ⚡</span>
             </button>
 
             <!-- Subtle Mobile Audio Indicator -->
@@ -523,9 +523,7 @@
                     <!-- Stat 4 (Customizable Arrival Date) -->
                     <div class="bg-slate-950/80 border border-emerald-500/40 rounded-2xl p-3.5">
                         <p class="text-xs font-scouter text-emerald-400 uppercase">SAIYAN POD LANDING DATE</p>
-                        <p id="revealDueDate" class="text-lg font-bold text-white mt-0.5">
-                            Coming Soon!
-                        </p>
+                        <div id="reveal-due-display" class="due-badge text-lg font-bold text-white mt-0.5">ARRIVING MAY 2027</div>
                     </div>
                 </div>
 
@@ -573,7 +571,7 @@
 
                 <div>
                     <label class="block text-xs font-scouter text-orange-300 uppercase mb-1">Estimated Arrival (Due Date)</label>
-                    <input id="inputDueDate" type="text" value="Coming Soon!" placeholder="e.g., May 2027 / This Fall!" class="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white focus:outline-none focus:border-orange-400">
+                    <input id="inputDueDate" type="text" value="ARRIVING MAY 2027" placeholder="e.g., ARRIVING MAY 2027" class="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white focus:outline-none focus:border-orange-400">
                 </div>
 
                 <div>
@@ -1179,11 +1177,11 @@
         });
 
         // Customization Modal Logic
-        const STORAGE_KEY = 'dbz_grandpa_config_v2';
+        const STORAGE_KEY = 'dbz_grandpa_config_v3';
         const DEFAULT_CONFIG = {
             role: 'GRANDPA',
             clan: 'THE CLAN',
-            due: 'Coming Soon!',
+            due: 'ARRIVING MAY 2027',
             note: '"Kiara is having a baby! Get your Kamehameha training ready, Grandpa—your newest training partner is on the way!"'
         };
 
@@ -1197,7 +1195,8 @@
         function applyConfig(cfg) {
             document.getElementById('revealTitleRole').textContent = (cfg.role || DEFAULT_CONFIG.role).toUpperCase();
             document.getElementById('revealClanName').textContent = (cfg.clan || DEFAULT_CONFIG.clan).toUpperCase();
-            document.getElementById('revealDueDate').textContent = cfg.due || DEFAULT_CONFIG.due;
+            const dueEl = document.getElementById('reveal-due-display') || document.getElementById('revealDueDate');
+            if (dueEl) dueEl.textContent = cfg.due || DEFAULT_CONFIG.due;
             document.getElementById('revealCustomNote').textContent = cfg.note || DEFAULT_CONFIG.note;
 
             document.getElementById('inputRole').value = cfg.role || DEFAULT_CONFIG.role;
